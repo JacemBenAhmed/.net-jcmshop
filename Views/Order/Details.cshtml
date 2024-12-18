@@ -1,0 +1,34 @@
+﻿@model projTP.Models.Order
+
+<h1>Order Details</h1>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<div>
+    <h3>Order Number: @Model.OrderNumber</h3>
+    <p><strong>Shipping Address:</strong> @Model.Adresse</p>
+    <p><strong>Status:</strong> @Model.Status</p>
+    <p><strong>Total Amount:</strong> @Model.TotalAmount €</p>
+
+    <h4>Items:</h4>
+    <ul>
+        @foreach (var item in Model.OrderItems)
+        {
+            <li>@item.Product.Nom - @item.Quantity x @item.Price €</li>
+        }
+    </ul>
+
+    @if (Model.Status == "Paid")
+    {
+        <p>Payment was successful!</p>
+    }
+    else
+    {
+        <p>Payment failed. Please try again.</p>
+    }
+</div>

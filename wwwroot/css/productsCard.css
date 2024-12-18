@@ -1,0 +1,52 @@
+﻿.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+    .card:hover {
+        transform: translateY(-5px); /* Légère élévation de la carte au survol */
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Ombre plus marquée */
+    }
+
+.card-img-top {
+    height: 250px; /* Hauteur fixe de l'image */
+    object-fit: cover; /* L'image couvre bien la zone sans déformer */
+    border-top-left-radius: .25rem;
+    border-top-right-radius: .25rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #e4e7ea;
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.card-text {
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+.card-footer .btn {
+    padding: 0.4rem 1rem;
+}
+
+.badge {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }

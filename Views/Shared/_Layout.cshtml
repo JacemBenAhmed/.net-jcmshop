@@ -1,0 +1,193 @@
+﻿@{
+    var isAuthenticated = (bool?)ViewData["IsAuthenticated"] ?? false;
+    var userName = "";
+    var userRole = "";
+
+    if (Context?.Request?.Cookies.TryGetValue("userRole", out var userRoleValue) == true)
+    {
+        userRole = userRoleValue;
+    }
+    if (Context?.Request?.Cookies.TryGetValue("userName", out var userNameValue) == true)
+    {
+        userName = userNameValue;
+    }
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - My Application</title>
+    <link href="~/css/styles.css" rel="stylesheet" />
+    <!-- Ajouter Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Ajouter Font Awesome CSS pour l'icône -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+
+    <style>
+    /* Style général de la navbar */
+    .navbar {
+        background-color: #343a40; /* Fond sombre pour un look plus professionnel */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Ombre plus marquée */
+        padding: 1rem 2rem; /* Espacement plus large */
+    }
+
+    .navbar-brand {
+        color: #ffffff !important;
+        font-weight: 700;
+        letter-spacing: 1px;
+        font-size: 1.8em;
+        transition: color 0.3s ease, transform 0.3s ease; /* Transition pour la couleur et la transformation */
+    }
+
+    .navbar-brand:hover {
+        color: #ffdd57 !important; /* Couleur dorée au survol */
+        transform: scale(1.1); /* Effet de zoom */
+    }
+
+    .navbar-nav .nav-link {
+        color: #ffffff !important;
+        font-size: 1.1em;
+        padding-left: 15px;
+        padding-right: 15px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: color 0.3s ease, text-decoration 0.3s ease; /* Transition pour la couleur et soulignement */
+    }
+
+    .navbar-nav .nav-link:hover {
+        color: #ffdd57 !important; /* Couleur dorée au survol */
+        text-decoration: underline;
+    }
+
+    /* Style du bouton panier */
+    .btn-cart {
+        background-color: #ff8c00 !important;
+        border-color: #ff8c00;
+        color: white;
+        font-size: 1.2em;
+        transition: background-color 0.3s ease;
+        position: relative;
+        padding: 0.6rem 1rem; /* Espacement autour du texte */
+    }
+
+    .badge {
+        position: absolute;
+        top: -5px;
+        right: -10px;
+        padding: 5px 10px;
+        border-radius: 50%;
+        background-color: #ff0000;
+        color: white;
+        font-weight: bold;
+        font-size: 0.9em;
+    }
+
+    /* Responsive Navbar pour mobile */
+    .navbar-toggler {
+        background-color: #ffffff;
+    }
+
+    .navbar-collapse {
+        justify-content: flex-end;
+    }
+
+    /* Animation pour l'icône panier */
+    .fa-shopping-cart {
+        transition: transform 0.3s ease;
+    }
+
+    .btn-cart:hover .fa-shopping-cart {
+        transform: scale(1.1);
+    }
+
+    /* Navbar dans les écrans larges */
+  
+</style>
+
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">JCMshop</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    
+                    @if (userRole == "admin" & isAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Dashboard/Index">Dashboard</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Product">Products</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Product/Create">Create Product</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Category">Categories</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Category/Create">Create Category</a>
+                        </li>
+                       
+                    }
+                   
+                </ul>
+                <div class="d-flex ms-auto align-items-center">
+                    @if (isAuthenticated)
+                    {
+                        <a href="/Cart" class="btn btn-cart ms-3">
+                            <i class="fas fa-shopping-cart"></i> Panier
+                            <span class="badge">@TempData["CartItemCount"]</span>
+                        </a>
+                    }
+                    @if (!isAuthenticated)
+                    {
+                        <a href="/Login" class="btn btn-primary">Login</a>
+                        <a href="/Register" class="btn btn-secondary ms-2">Register</a>
+                    }
+                    else
+                    {
+                        <form action="/Home/Logout" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger ms-2">Logout</button>
+                        </form>
+                    }
+
+                    <!-- Profile Dropdown -->
+                    @if (isAuthenticated)
+                    {
+                        <div class="dropdown ms-3">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user"></i> @userName
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                                <li><a class="dropdown-item" href="/Profile">Profile</a></li>
+                                <li><a class="dropdown-item" href="/historique">Historique</a></li>
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        @RenderBody()
+    </div>
+
+    @RenderSection("Scripts", required: false)
+
+    <!-- Ajouter Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

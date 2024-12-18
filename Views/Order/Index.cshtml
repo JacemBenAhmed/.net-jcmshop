@@ -1,0 +1,73 @@
+﻿@model projTP.ViewModels.OrderIndexViewModel
+
+<h1>Your Order</h1>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+@if (!Model.CartItems.Any())
+{
+    <p>Your cart is empty.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.CartItems)
+            {
+                <tr>
+                    <td>@item.Product.Nom</td>
+                    <td>@item.Price €</td>
+                    <td>@item.Quantity</td>
+                    <td>@(item.Price * item.Quantity) €</td> <!-- Calculate subtotal -->
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h3>Total Amount: @Model.TotalAmount €</h3>
+
+    <form method="post" action="@Url.Action("Create", "Order")">
+        <div class="form-group">
+            <label for="Adresse">Shipping Address</label>
+            <input type="text" id="Adresse" name="Adresse" class="form-control" required />
+        </div>
+
+        <!-- Payment Method Section -->
+        <div class="form-group">
+            <label for="CardNumber">Card Number</label>
+            <div class="input-group">
+                <input type="text" id="CardNumber" name="CardNumber" class="form-control" placeholder="Card Number" required />
+                <div class="input-group-append">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/63/Logo_visa_2019.svg" alt="Visa" class="card-logo" />
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/MasterCard_Logo.svg/120px-MasterCard_Logo.svg.png" alt="MasterCard" class="card-logo" />
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="ExpirationDate">Expiration Date</label>
+            <input type="text" id="ExpirationDate" name="ExpirationDate" class="form-control" placeholder="MM/YY" required />
+        </div>
+
+        <div class="form-group">
+            <label for="CVV">CVV</label>
+            <input type="text" id="CVV" name="CVV" class="form-control" placeholder="CVV" required />
+        </div>
+
+        <input type="hidden" name="TotalAmount" value="@Model.TotalAmount" />
+        <button type="submit" class="btn btn-primary">Confirm Order</button>
+    </form>
+}

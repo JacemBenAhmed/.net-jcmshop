@@ -1,0 +1,86 @@
+﻿@model IEnumerable<projTP.Models.Product>
+
+@{
+    ViewData["Title"] = "Product List";
+    var isAuthenticated = (bool?)ViewData["IsAuthenticated"] ?? false;
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    string searchQuery = ViewBag.SearchQuery ?? "";
+    decimal minPrice = ViewBag.MinPrice ?? 0;
+    decimal maxPrice = ViewBag.MaxPrice ?? 1000;
+}
+
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<link href="~/css/styles.css" rel="stylesheet" />
+
+<div class="container mx-auto mt-12">
+    <h1 class="text-3xl font-semibold text-center text-gray-800 mb-8">Product List</h1>
+
+    <!-- Search and Filter Form -->
+    <form method="get" class="flex flex-col md:flex-row justify-between mb-8">
+        <div class="flex mb-4 md:mb-0">
+            <input type="text" name="searchQuery" class="w-full md:w-64 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Search by product name" value="@searchQuery" />
+            <button type="submit" class="bg-blue-600 text-white px-6 py-2 ml-4 rounded-lg shadow-lg hover:bg-blue-700 focus:outline-none">Search</button>
+        </div>
+        <div class="flex">
+            <input type="number" name="minPrice" class="w-32 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Min Price" value="@minPrice" />
+            <input type="number" name="maxPrice" class="w-32 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ml-4" placeholder="Max Price" value="@maxPrice" />
+            <button type="submit" class="bg-green-600 text-white px-6 py-2 ml-4 rounded-lg shadow-lg hover:bg-green-700 focus:outline-none">Filter</button>
+        </div>
+    </form>
+
+    <!-- Notification -->
+    <div id="notification" class="alert alert-success d-none mb-8 p-4 bg-green-100 text-green-700 rounded-lg shadow-lg">
+        Produit ajouté au panier avec succès !
+    </div>
+
+    <!-- Product Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        @foreach (var product in Model)
+        {
+            <div class="card bg-white shadow-xl rounded-lg overflow-hidden transform hover:scale-105 transition-transform duration-300">
+                <div class="w-full h-54 bg-gray-200 overflow-hidden">
+                    <img src="@Url.Content("~/images/" + product.ImgPath)" alt="@product.Nom" class="w-full h-auto object-contain" />
+                </div>
+                <div class="p-6">
+                    <h5 class="text-lg font-semibold text-gray-800 truncate">@product.Nom</h5>
+                    <p class="text-sm text-gray-500 mt-2 truncate">@product.Description</p>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="bg-green-200 text-green-800 text-sm px-3 py-1 rounded-full">@product.Category.Nom</span>
+                        <span class="text-lg font-semibold text-green-700">@product.Price €</span>
+                    </div>
+                    <div class="flex justify-between mt-4">
+                        <form action="@Url.Action("AddToCart", "Cart")" method="post">
+                            <input type="hidden" name="productId" value="@product.Id" />
+                            <input type="hidden" name="quantity" value="1" />
+                            @if (isAuthenticated)
+                            {
+                                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none">
+                                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                                </button>
+                            }
+                        </form>
+
+                        <a href="@Url.Action("Details", "Product", new { id = product.Id })" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300">
+                            <i class="fas fa-info-circle"></i> View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+
+    <!-- Pagination Controls -->
+    <nav class="mt-8">
+        <ul class="flex justify-center space-x-2">
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                <li class="page-item">
+                    <a class="page-link @((i == currentPage) ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600") py-2 px-4 rounded-lg" href="?page=@i&searchQuery=@searchQuery&minPrice=@minPrice&maxPrice=@maxPrice">Page @i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>
